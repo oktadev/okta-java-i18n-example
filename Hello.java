@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class Hello {
 
@@ -13,8 +14,8 @@ public class Hello {
             country = args[1];
         }
 
-        Locale locale = new Locale(language, country);
-        ResourceBundle messages = ResourceBundle.getBundle("messages", locale);
+        var locale = new Locale(language, country);
+        var messages = ResourceBundle.getBundle("messages", locale);
 
         System.out.print(messages.getString("hello") + " ");
         System.out.println(messages.getString("world"));
