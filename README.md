@@ -40,9 +40,9 @@ To run the `custom-login` example, you'll need to create an account and OIDC app
 
 Log in to your Okta Developer account (or [sign up](https://developer.okta.com/signup-now/) if you don’t have an account).
 
-. From the **Applications** page, choose **Add Application**.
-. On the Create New Application page, select **Web**.
-. Give your app a memorable name, then click **Done**.
+1. From the **Applications** page, choose **Add Application**.
+2. On the Create New Application page, select **Web**.
+3. Give your app a memorable name, then click **Done**.
 
 Copy your issuer (found under **API** > **Authorization Servers**), client ID, and client secret into `custom-login/src/main/resources/application.yml` as follows:
 
