@@ -46,14 +46,13 @@ Log in to your Okta Developer account (or [sign up](https://developer.okta.com/s
 
 Copy your issuer (found under **API** > **Authorization Servers**), client ID, and client secret into `custom-login/src/main/resources/application.yml` as follows:
 
-[source,yaml]
-----
+```yaml
 okta:
   oauth2:
     issuer: https://{yourOktaDomain}/oauth2/default
     client-id: {yourClientID}
     client-secret: {yourClientSecret}
-----
+```
 
 **NOTE:** The value of `{yourOktaDomain}` should be something like `dev-123456.okta.com`. Make sure you don't include `-admin` in the value!
 
