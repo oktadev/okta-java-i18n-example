@@ -38,7 +38,7 @@ To run the `custom-login` example, you'll need to create an account and OIDC app
 
 ### Create an Application in Okta
 
-Log in to your Okta Developer account (or [sign up](https://developer.okta.com/signup-now/) if you don’t have an account).
+Log in to your Okta Developer account (or [sign up](https://developer.okta.com/signup/) if you don’t have an account).
 
 1. From the **Applications** page, choose **Add Application**.
 2. On the Create New Application page, select **Web**.
