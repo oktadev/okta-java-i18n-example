@@ -196,7 +196,7 @@ You might notice that Spanish is displayed, even though the user has `en` as its
 ** React: a https://github.com/jhipster/react-jhipster/blob/master/src/language/translate.tsx[`Translate`] component based off https://github.com/bloodyowl/react-translate[react-translate]
 ** Vue: https://kazupon.github.io/vue-i18n/[Vue I18n]
 
-==== Learn More!
+== Learn More!
 
 . GitHub repo: https://github.com/oktadeveloper/okta-java-i18n-example
 
