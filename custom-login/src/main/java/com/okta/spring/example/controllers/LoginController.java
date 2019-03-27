@@ -19,12 +19,12 @@ import com.okta.spring.boot.oauth.config.OktaOAuth2Properties;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 
 @Controller
 public class LoginController {
@@ -38,16 +38,15 @@ public class LoginController {
     private static final String LANGUAGE = "language";
 
     private final OktaOAuth2Properties oktaOAuth2Properties;
-    private final LocaleResolver localeResolver;
 
-    public LoginController(OktaOAuth2Properties oktaOAuth2Properties, LocaleResolver localeResolver) {
+    public LoginController(OktaOAuth2Properties oktaOAuth2Properties) {
         this.oktaOAuth2Properties = oktaOAuth2Properties;
-        this.localeResolver = localeResolver;
     }
 
     @GetMapping(value = "/custom-login")
     public ModelAndView login(HttpServletRequest request,
-                              @RequestParam(name = "state", required = false) String state) throws MalformedURLException {
+                              @RequestParam(name = "state", required = false) String state,
+                              Locale locale) throws MalformedURLException {
 
         // if we don't have the state parameter redirect
         if (state == null) {
@@ -69,7 +68,7 @@ public class LoginController {
             request.getContextPath() + "/authorization-code/callback"
         );
         mav.addObject(ISSUER_URI, issuer);
-        mav.addObject(LANGUAGE, localeResolver.resolveLocale(request));
+        mav.addObject(LANGUAGE, locale);
 
         return mav;
     }
