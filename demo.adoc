@@ -1,0 +1,203 @@
+:experimental:
+// Define unicode for Apple Command key.
+:commandkey: &#8984;
+
+= i18n in Java 11, Spring Boot, and JavaScript
+
+The brackets at the end of each step indicate the alias's or IntelliJ Live Templates to use. You can find the template definitions at https://github.com/mraible/idea-live-templates[mraible/idea-live-templates].
+
+== Java i18n with Resource Bundles
+
+. Create a project directory: `mkdir java-i18n`
+
+. Create a `Hello.java` file:
+
+  public class Hello {
+      public static void main(String[] args) {
+          System.out.println("Hello, World!");
+      }
+  }
+
+. Run `java Hello.java`
+
+. Show SDKMAN! https://sdkman.io/
+
+  sdk list java
+  sdk install java 11.0.2-open
+  sdk default java 11.0.2-open
+
+. Create a `messages_en_US.properties` file:
+
+  hello=Hello
+  world=World
+
+. Create a `message_es.properties` file:
+
+  hello=Hola
+  world=Mundo
+
+. Modify `Hello.java` to use `Locale` and `ResourceBundle` to retrieve translations [`i18n-hello`]
+
+. Run `java Hello.java`; mention https://openjdk.java.net/jeps/330[JEP 330]
+
+. Improve parsing of arguments to allow only specifying the language:
+
+  if (args.length == 1) {
+      language = args[0];
+  } else if (args.length == 2) {
+      language = args[0];
+      country = args[1];
+  }
+
+. Run `java Hello.java es`
+
+Pretty cool, eh? Java has i18n built-in!
+
+== i18n with Spring Boot and Thymeleaf
+
+. Create a new app with **Web** and **Thymeleaf**:
+
+  http https://start.spring.io/starter.zip dependencies==web,thymeleaf -d | tar xvz
+
+. Create a `HomeController` class [`i18n-home`]
+
+. Add a Thymeleaf template for your `HomeController` in `src/main/resources/templates/home.html`
+
+  <html xmlns:th="http://www.thymeleaf.org">
+  <body>
+      <h1 th:text="#{title}"></h1>
+      <p th:text="#{message}"></p>
+  </body>
+  </html>
+
+. Add a `messages.properties` in `src/main/resources`
+
+  title=Welcome
+  message=Hello! I hope you're having a great day.
+
+. Add a Spanish translation in `messages_es.properties`
+
+  title=Bienvenida
+  message=¡Hola! Espero que estés teniendo un gran día. 😃
+
+. Change Chrome settings (chrome://settings/languages) to make Spanish the default
+
+. Run `./mvnw spring-boot:run`, navigate to http://localhost:8080, see page in Spanish
+
+=== Add the Ability to Change Locales with a URL Parameter
+
+. Add a `MvcConfigurer` to add a `LocaleChangeInterceptor` [`i18n-mvc`]
+
+. Restart server and navigate to http://localhost:8080/?lang=en 
+
+=== Hot Reloading Thymeleaf Templates and Resource Bundles
+
+. Add `spring-boot-devtools` as a dependency
+
+. Add `spring.thymeleaf.prefix` to your `application.properties`
+
+  spring.thymeleaf.prefix=file:src/main/resources/templates/
+
+. To hot-reload resource bundles, use `mvn compile` or adjust IntelliJ settings to **Update resources** on frame deactivation
+
+== Customize the Language used by Okta's Sign-In Widget
+
+. Export the custom login example for Spring Boot:
+
+  svn export https://github.com/okta/samples-java-spring/trunk/custom-login
+  cd custom-login
+
+. Create an OIDC Web app on Okta
+
+. Create an `.okta.env` file in `custom-login` and add `*.env` to `.gitignore`:
+
+  export OKTA_OAUTH2_ISSUER=https://{yourOktaDomain}/oauth2/default
+  export OKTA_OAUTH2_CLIENT_ID={yourClientID}
+  export OKTA_OAUTH2_CLIENT_SECRET={yourClientSecret}
+
+. Run `source .okta.env`, start the app using `./mvnw`, open http://localhost:8080, and click **Login**
+
+. The Sign-In Widget renders in Spanish because Spring auto-enables `AcceptHeaderLocaleResolver` by default
+
+This works, but if you add a locale interceptor, the widget doesn't change languages
+
+=== Add i18n Messages and Sync Locales
+
+. Create an `MvcConfigurer` class [`i18n-mvc`], show how http://localhost:8080/?lang=en still shows widget in Spanish
+
+. Change `LoginController` to set `language` as a model attribute
+
+  private static final String LANGUAGE = "language";
+  
+  @GetMapping(value = "/custom-login")
+  public ModelAndView login(HttpServletRequest request,
+                            @RequestParam(name = "state", required = false) String state,
+                            Locale locale)
+                            throws MalformedURLException {
+      ...
+      mav.addObject(LANGUAGE, locale);
+      return mav;
+  }
+
+. Modify `login.html` to add a `config.language` setting
+
+  config.redirectUri = /*[[${redirectUri}]]*/ '{redirectUri}';
+  config.language = /*[[${language}]]*/ '{language}';
+
+. Restart Spring Boot, go to http://localhost:8080/?lang=en, and note how the widget renders in English
+
+=== Add Internationalization Bundles for Thymeleaf
+
+. Create a `messages.properties` in `custom-login/src/main/resources` for English translations
+
+  hello=Hello
+  welcome=Welcome home, {0}!
+
+. Create a `messages_es.properties` file
+
+  hello=Hola
+  welcome=¡Bienvenido a casa {0}!
+
+. Change `home.html` to translate the "Hello!" text
+
+  <p th:text="#{hello}">Hello!</p>
+
+. Change the welcome message displayed when the user is authenticated
+
+  <p th:text="#{welcome(${#authentication.name})}">Welcome home,
+    <span>Joe Coder</span>!</p>
+
+. Restart Spring Boot, log in, and you should see a welcome message in your chosen locale
+
+You might notice that Spanish is displayed, even though the user has `en` as its locale attribute
+
+=== Use the User's Locale from Okta
+
+. Create an `OidcLocaleResolver` to retrieve the locale from the authenticated user [`i18n-oidc`]
+
+. Update `MvcConfigurer` to use this class
+
+  @Bean
+  public LocaleResolver localeResolver() {
+    return new OidcLocaleResolver();
+  }
+
+. Try it out by restarting, navigating to http://localhost:8080/?lang=es, and authenticating
+
+== i18n in JavaScript with Angular, React, and Vue
+
+. Check out https://jhipster.tech[JHipster] for an excellent example of i18n in JavaScript apps
+
+. JHipster supports three awesome front-end frameworks: Angular, React, and Vue
+
+. Uses libraries to lazy-load JSON files with translations
+
+** Angular: http://www.ngx-translate.com/[ngx-translate]
+** React: a https://github.com/jhipster/react-jhipster/blob/master/src/language/translate.tsx[`Translate`] component based off https://github.com/bloodyowl/react-translate[react-translate]
+** Vue: https://kazupon.github.io/vue-i18n/[Vue I18n]
+
+==== Learn More!
+
+. GitHub repo: https://github.com/oktadeveloper/okta-java-i18n-example
+
+. Blog post: https://developer.okta.com/blog/2019/02/25/java-i18n-internationalization-localization
