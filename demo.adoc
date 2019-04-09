@@ -18,7 +18,7 @@ The brackets at the end of each step indicate the alias's or IntelliJ Live Templ
       }
   }
 
-. Run `java Hello.java`
+. Run `java Hello.java`; mention https://openjdk.java.net/jeps/330[JEP 330]
 
 . Show SDKMAN! https://sdkman.io/
 
@@ -38,7 +38,7 @@ The brackets at the end of each step indicate the alias's or IntelliJ Live Templ
 
 . Modify `Hello.java` to use `Locale` and `ResourceBundle` to retrieve translations [`i18n-hello`]
 
-. Run `java Hello.java`; mention https://openjdk.java.net/jeps/330[JEP 330]
+. Run `java Hello.java`
 
 . Improve parsing of arguments to allow only specifying the language:
 
